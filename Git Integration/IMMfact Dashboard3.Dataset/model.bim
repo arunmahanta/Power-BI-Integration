@@ -1,0 +1,2823 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"EP Sales Data\",\"Merged Data\",\"Sheet2\",\"Errors in Merged Data\",\"Table (2)\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "1"
+      },
+      {
+        "name": "PBIDesktopVersion",
+        "value": "2.124.1554.0 (23.12)"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "en-US",
+    "cultures": [
+      {
+        "name": "en-US",
+        "linguisticMetadata": {
+          "content": {
+            "DynamicImprovement": "HighConfidence",
+            "Entities": {
+              "ep_sales_data.cagr_final": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "EP Sales Data",
+                    "ConceptualProperty": "CAGR_final"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "CAGR": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "ep_sales_data.sanitized_indication": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "EP Sales Data",
+                    "ConceptualProperty": "Sanitized Indication"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Indications": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "ep_sales_data.year": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "EP Sales Data",
+                    "ConceptualProperty": "Year"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Y1": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  },
+                  {
+                    "Y2": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "merged_data.lp_sp": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Merged Data",
+                    "ConceptualProperty": "LP/SP"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Pharma Type": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "merged_data.novelty_for_indication_moa": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Merged Data",
+                    "ConceptualProperty": "Novelty for Indication MoA"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "Novelty": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              },
+              "merged_data.route_formulation": {
+                "Definition": {
+                  "Binding": {
+                    "ConceptualEntity": "Merged Data",
+                    "ConceptualProperty": "Route/Formulation"
+                  }
+                },
+                "State": "Generated",
+                "Terms": [
+                  {
+                    "ROA": {
+                      "Source": {
+                        "Agent": "PowerBI.VisualColumnRename",
+                        "Type": "External"
+                      },
+                      "State": "Suggested",
+                      "Weight": 0.9
+                    }
+                  }
+                ]
+              }
+            },
+            "Language": "en-US",
+            "Version": "2.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "Errors in Merged Data",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "expression": [
+          "let",
+          "Source = #\"Merged Data\",",
+          "  #\"Detected Type Mismatches\" = let",
+          "    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),",
+          "    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),",
+          "    fieldNames = Record.FieldNames(recordTypeFields),",
+          "    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),",
+          "    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = \"The type of the value does not match the type of the column.\", Detail = v], fieldTypes{i}})",
+          "in",
+          "    Table.TransformColumns(Source, pairs),",
+          "  #\"Added Index\" = Table.AddIndexColumn(#\"Detected Type Mismatches\", \"Row Number\" ,1),",
+          "  #\"Kept Errors\" = Table.SelectRowsWithErrors(#\"Added Index\", {\"Company\", \"Drug Name\", \"Country\", \"TA\", \"DA\", \"Indication\", \"Mechanism Of Action\", \"Route/Formulation\", \"Biosimilar/Brand\", \"Phase flag\", \"Platform/Technology\", \"Chronological Phase\", \"MoA Tier\", \"Filter Tier\", \"Patient Segment\", \"Drug ID\", \"LP/SP\", \"New Company based  on Statuses\", \"Status Pref\", \"On PRIME\", \"On Fasttrack\", \"Phase\", \"Technological Category\", \"Technology Subtype Classifications\", \"Technology Platform Profile\", \"WW Indication Status (Current)\", \"USA Indication Status (Current)\", \"Europe Indication Status (Current)\", \"WW Indication Launch\", \"US Indication Launch\", \"Europe Indication Launch\", \"Patent Expiry\", \"Patent Expiry (Ex USA)\", \"Novelty for Indication MoA\", \"Phase Code\", \"FIC\", \"Active Early/Late Development\"}),",
+          "  #\"Reordered Columns\" = Table.ReorderColumns(#\"Kept Errors\", {\"Row Number\", \"Company\", \"Drug Name\", \"Country\", \"TA\", \"DA\", \"Indication\", \"Mechanism Of Action\", \"Route/Formulation\", \"Biosimilar/Brand\", \"Phase flag\", \"Platform/Technology\", \"Chronological Phase\", \"MoA Tier\", \"Filter Tier\", \"Patient Segment\", \"Drug ID\", \"LP/SP\", \"New Company based  on Statuses\", \"Status Pref\", \"On PRIME\", \"On Fasttrack\", \"Phase\", \"Technological Category\", \"Technology Subtype Classifications\", \"Technology Platform Profile\", \"WW Indication Status (Current)\", \"USA Indication Status (Current)\", \"Europe Indication Status (Current)\", \"WW Indication Launch\", \"US Indication Launch\", \"Europe Indication Launch\", \"Patent Expiry\", \"Patent Expiry (Ex USA)\", \"Novelty for Indication MoA\", \"Phase Code\", \"FIC\", \"Active Early/Late Development\"}),",
+          "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Reordered Columns\",{{\"Filter Tier\", type text}}),",
+          "    #\"Filter Tier\" = #\"Changed Type\"{0}[Filter Tier]",
+          "in",
+          "  #\"Filter Tier\""
+        ],
+        "kind": "m",
+        "lineageTag": "9723d368-680b-477e-ac3c-0f6609a2297a",
+        "queryGroup": "Query Errors - 1/19/2024 2:54:18 PM"
+      }
+    ],
+    "queryGroups": [
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "description": "Errors in queries that were loaded on 1/19/2024 2:54:18 PM.",
+        "folder": "Query Errors - 1/19/2024 2:54:18 PM"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "502fc3c4-0536-46dd-822d-ae1b89f06117",
+        "fromColumn": "WW Indication Launch",
+        "fromTable": "Merged Data",
+        "joinOnDateBehavior": "datePartOnly",
+        "toColumn": "Date",
+        "toTable": "LocalDateTable_5a88aba0-13e3-4ff2-98ca-e56e5ad3312c"
+      },
+      {
+        "name": "24e697f5-dd27-4074-ad0d-d5bc0f449e7b",
+        "fromColumn": "US Indication Launch",
+        "fromTable": "Merged Data",
+        "joinOnDateBehavior": "datePartOnly",
+        "toColumn": "Date",
+        "toTable": "LocalDateTable_30ebe8df-2c3e-475a-b0a3-f37708219f8d"
+      },
+      {
+        "name": "be10989b-1d7c-41b0-924a-62e5519722f9",
+        "fromColumn": "Patent Expiry",
+        "fromTable": "Merged Data",
+        "joinOnDateBehavior": "datePartOnly",
+        "toColumn": "Date",
+        "toTable": "LocalDateTable_715d0780-ad63-4838-b49a-66c00ffb06c3"
+      },
+      {
+        "name": "53e715ec-4fcc-4a0d-baaf-0feff4a8b588",
+        "fromColumn": "Patent Expiry (Ex USA)",
+        "fromTable": "Merged Data",
+        "joinOnDateBehavior": "datePartOnly",
+        "toColumn": "Date",
+        "toTable": "LocalDateTable_c868900b-5938-47fa-ad37-1e252c855e08"
+      },
+      {
+        "name": "91fe9b83-899b-4c9d-95a6-41264c3d5a3b",
+        "crossFilteringBehavior": "bothDirections",
+        "fromColumn": "Phase",
+        "fromTable": "Merged Data",
+        "securityFilteringBehavior": "bothDirections",
+        "toColumn": "Phase",
+        "toTable": "Table (2)"
+      }
+    ],
+    "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "EP Sales Data",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Company",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "842a0efe-3af6-414f-97ad-4475a76ecc47",
+            "sourceColumn": "Company",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Product",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "12777774-b05a-4a68-b17a-44ec1ef7b2f4",
+            "sourceColumn": "Product",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Generic Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f84345c8-fd6a-441c-896a-8706a2fbae0c",
+            "sourceColumn": "Generic Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Mechanism of Action",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fd5d415c-2357-4ab4-a2b6-3874011d8cfa",
+            "sourceColumn": "Mechanism of Action",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sanitized Indication",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "73dd096f-e99d-4892-bdf6-b3d72f69586a",
+            "sourceColumn": "Sanitized Indication",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "TA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "5a4f5126-253b-4cb9-b191-5137ae1d6a63",
+            "sourceColumn": "TA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "94544af0-b745-49c0-abfa-c94a6c766745",
+            "sourceColumn": "DA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Phase",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "e51abb9b-ca5b-405e-be16-f35d35a6f81d",
+            "sourceColumn": "Phase",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "ac9a556a-a5d7-4abc-9e7a-56bd46a243e0",
+            "sourceColumn": "Year",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Sales WW",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "double",
+            "formatString": "\\$#,0.###############;(\\$#,0.###############);\\$#,0.###############",
+            "lineageTag": "29f0ef3c-bd4c-4443-ad9c-919efe1dd1dd",
+            "sourceColumn": "Sales WW",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Sales US",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "de5a4501-6a63-48b3-b866-bb442782fdaa",
+            "sourceColumn": "Sales US",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "7f1d09bd-c779-4c15-9a87-4ab584b9d09b",
+        "measures": [
+          {
+            "name": "CAGR_Yrs",
+            "expression": [
+              "",
+              "VAR YRs = VALUES('EP Sales Data'[Year])",
+              "VAR min_Yr = MINX(YRs,[Year])",
+              "VAR max_Yr = MAXX(YRs,[Year])",
+              "VAR minSaleTable = FILTER('EP Sales Data','EP Sales Data'[Year] = min_Yr)",
+              "VAR maxSaleTable = FILTER('EP Sales Data','EP Sales Data'[Year]= max_Yr)",
+              "VAR min_Sales = SUMX(minSaleTable,[Sales WW])",
+              "VAR max_Sales = SUMX(maxSaleTable,[Sales WW])",
+              "RETURN",
+              "max_Yr-min_Yr"
+            ],
+            "formatString": "0",
+            "lineageTag": "801ee78e-8d94-4f87-a90b-99170275e66b"
+          },
+          {
+            "name": "CAGR_final",
+            "expression": [
+              "",
+              "VAR YRs = VALUES('EP Sales Data'[Year])",
+              "VAR min_Yr = MINX(YRs,[Year])",
+              "VAR max_Yr = MAXX(YRs,[Year])",
+              "VAR cagr_yr = max_Yr-min_Yr",
+              "VAR minSaleTable = FILTER('EP Sales Data','EP Sales Data'[Year] = min_Yr)",
+              "VAR maxSaleTable = FILTER('EP Sales Data','EP Sales Data'[Year] = max_Yr)",
+              "VAR min_Sales = SUMX(minSaleTable,[Sales WW])",
+              "VAR max_Sales = SUMX(maxSaleTable,[Sales WW])",
+              "RETURN",
+              "IF(cagr_yr=0,BLANK(),(max_Sales/min_Sales)^(1/cagr_yr)-1) "
+            ],
+            "formatString": "0.00%;-0.00%;0.00%",
+            "lineageTag": "13baa6f9-b19d-4085-856a-8787b13008d7"
+          },
+          {
+            "name": "Sales_Measure",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "expression": "CALCULATE(SUM('EP Sales Data'[Sales US]))",
+            "lineageTag": "91354e5e-8964-46a9-82d7-51c571324d75"
+          },
+          {
+            "name": "Top_MOA_sales",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "expression": [
+              "",
+              "VAR RankingContext = VALUES('EP Sales Data'[Sales WW])",
+              "var TOPSALES = TOPN(15,ALL('EP Sales Data'[Mechanism of Action]),[Sales_Measure])",
+              "RETURN",
+              "CALCULATE([Sales_Measure],TOPSALES,RankingContext)"
+            ],
+            "lineageTag": "0ea328bf-788e-4bcf-bc0e-01ce8c748e06"
+          },
+          {
+            "name": "MoA Sales %",
+            "expression": [
+              "",
+              "VAR moaCompanySummarize = topn(1,SUMMARIZE('EP Sales Data',[Mechanism of Action],[Company],[Product],\"Sum of Sales\",SUMX('EP Sales Data',[Sales WW])),[Sum of Sales])",
+              "var moaSummarize = SUMMARIZE('EP Sales Data',[Mechanism of Action],\"Sum of Sales\",SUMX('EP Sales Data',[Sales WW]))",
+              "return SUMX(moaCompanySummarize,[Sum of Sales])/SUMX(moaSummarize,[Sum of Sales])"
+            ],
+            "formatString": "0.00%;-0.00%;0.00%",
+            "lineageTag": "dda7d101-b376-4d31-b310-9c024d192e2c"
+          },
+          {
+            "name": "MoA Sales Top Product",
+            "expression": [
+              "",
+              "VAR moaCompanySummarize = topn(1,SUMMARIZE('EP Sales Data',[Mechanism of Action],[Product],\"Sum of Sales\",SUMX('EP Sales Data',[Sales WW])),[Sum of Sales])",
+              "",
+              "return CONCATENATEX(moaCompanySummarize,[Product],\", \")"
+            ],
+            "lineageTag": "959842d3-bf83-46f3-9ca1-7754e82a7a3e"
+          },
+          {
+            "name": "MoA Sales Top Company",
+            "expression": [
+              "",
+              "VAR moaCompanySummarize = topn(1,SUMMARIZE('EP Sales Data',[Mechanism of Action],[Company],\"Sum of Sales\",SUMX('EP Sales Data',[Sales WW])),[Sum of Sales])",
+              "",
+              "return CONCATENATEX(moaCompanySummarize,[Company],\", \")"
+            ],
+            "lineageTag": "136e27bb-eb10-4e7a-83b2-a7e73d5942f0"
+          },
+          {
+            "name": "MoA Sales Top DA",
+            "expression": [
+              "",
+              "VAR moaCompanySummarize = SUMMARIZE('EP Sales Data',[Mechanism of Action],[DA],\"Sum of Sales\",SUMX('EP Sales Data',[Sales WW]))",
+              "return countX(moaCompanySummarize,[DA])"
+            ],
+            "formatString": "0",
+            "lineageTag": "8381366f-efa4-4e26-b6f8-853fd162660a"
+          },
+          {
+            "name": "OTHERCOMPANYSLC",
+            "expression": [
+              "",
+              "VAR companyName = SELECTEDVALUE('EP Sales Data'[Company])",
+              "VAR filterTable = FILTER('EP Sales Data','EP Sales Data'[Company]<>companyName)",
+              "VAR summaryTable = SUMMARIZE(filterTable,'EP Sales Data'[Mechanism of Action])",
+              "RETURN",
+              "    COUNTAX(summaryTable,'EP Sales Data'[Mechanism of Action])"
+            ],
+            "formatString": "0",
+            "lineageTag": "b94fe428-9c71-4b2a-a01d-363d00e9dd67"
+          },
+          {
+            "name": "Top_MOA_sales2",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "expression": [
+              "",
+              "VAR RankingContext = VALUES('EP Sales Data'[Sales WW])",
+              "var TOPSALES = TOPN(15,ALL('EP Sales Data'[Mechanism of Action]),[Sales_Measure])",
+              "RETURN",
+              "CALCULATE([Sales_Measure],TOPSALES,RankingContext)"
+            ],
+            "lineageTag": "f18d409f-5f2f-477a-bfbd-ae1e47932f89"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "EP Sales Data",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\KJ40896\\Documents\\EP Sales Data V3.xlsx\"), null, true),",
+                "    combined_Sheet = Source{[Item=\"combined\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(combined_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Company\", type text}, {\"Product\", type text}, {\"Generic Name\", type text}, {\"Mechanism of Action\", type text}, {\"Sanitized Indication\", type text}, {\"TA\", type text}, {\"DA\", type text}, {\"WW Indication Status (Current)\", type text}, {\"Year\", Int64.Type}, {\"Sales WW\", type number}, {\"Sales US\", type number}}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Changed Type\", each true),",
+                "    #\"Removed Blank Rows\" = Table.SelectRows(#\"Filtered Rows\", each not List.IsEmpty(List.RemoveMatchingItems(Record.FieldValues(_), {\"\", null}))),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Removed Blank Rows\",{{\"WW Indication Status (Current)\", \"Phase\"}})",
+                "in",
+                "    #\"Renamed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "DateTableTemplate_c7d033c6-e420-4cdf-8b37-c769056ba2cb",
+        "annotations": [
+          {
+            "name": "__PBI_TemplateDateTable",
+            "value": "true"
+          },
+          {
+            "name": "DefaultItem",
+            "value": "DateHierarchy"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "c1515f86-7324-4822-aebb-2b9fa8318eed",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isHidden": true,
+            "lineageTag": "db5fc908-db7b-4768-a7ae-da917ab59694",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isHidden": true,
+            "lineageTag": "ada130c9-f565-4651-a00e-f0120a0f017d",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "f0ad2241-524c-4aec-a24f-0482ea9d3311",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isHidden": true,
+            "lineageTag": "eda375e5-6310-4295-977c-c18efccebcfd",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "9491d6cc-cc29-4922-be7e-0e41b1827d8c",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isHidden": true,
+            "lineageTag": "64079088-f29c-465a-b25e-e99b41f49dfb",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "8acb0ad0-6a44-4ddb-84a3-d87bf54d25a6",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "ede6f8a1-52b5-4526-bbaa-31fdbc4c3c2c",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "ccc0b759-af4f-41d7-b38b-5d62695d11ed",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "4ad97c0a-7747-41d6-a7da-d20d8ee61e00",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "3c5436d4-ccbd-42c4-a81f-33c5fb11491a"
+          }
+        ],
+        "isHidden": true,
+        "isPrivate": true,
+        "lineageTag": "3d22194e-2510-436d-b657-dc43e6442436",
+        "partitions": [
+          {
+            "name": "DateTableTemplate_c7d033c6-e420-4cdf-8b37-c769056ba2cb",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(2015,1,1), Date(2015,1,1))",
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Merged Data",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Company",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "66f72a3a-4d7e-4b98-a54a-9ecb44abc9b4",
+            "sourceColumn": "Company",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Drug Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "428b6e43-6ee9-4366-97c6-2e86a129b7af",
+            "sourceColumn": "Drug Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Country",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4287fdbe-e783-4843-b60c-87869fed4ea4",
+            "sourceColumn": "Country",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "TA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7d99a75b-787e-4980-95e8-f770e35f33fa",
+            "sourceColumn": "TA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "01262738-26b0-49b5-8c69-a3210e48a63d",
+            "sourceColumn": "DA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Indication",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "67f9e407-5975-4445-bbb4-2d81e9723d47",
+            "sourceColumn": "Indication",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Mechanism Of Action",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b599e8fc-da61-4d84-b54a-2ceb8e3e7787",
+            "sourceColumn": "Mechanism Of Action",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Route/Formulation",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "0b0f37e3-7a55-4dc7-b809-9322f07ebf15",
+            "sourceColumn": "Route/Formulation",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Proprietary",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7d31c299-7f67-4af4-b2e6-3710aa30c325",
+            "sourceColumn": "Proprietary",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Phase flag",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7fe53d70-41d2-47dc-b8a2-7f05d8e9824c",
+            "sourceColumn": "Phase flag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Platform/Technology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "de050817-e459-4b84-a11c-e915c702b2f1",
+            "sourceColumn": "Platform/Technology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Chronological Phase",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "0ba65de3-6923-4320-b631-62caa3f161dd",
+            "sourceColumn": "Chronological Phase",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "MoA Tier",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "23985710-fc64-4de5-a694-205307d630a5",
+            "sourceColumn": "MoA Tier",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Phase segment",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "22db992d-c6fc-4f86-8f90-63a708c9aa37",
+            "sourceColumn": "Phase segment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Patient Segment",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "bc9851e6-da26-4381-84dd-1cfe5b871a47",
+            "sourceColumn": "Patient Segment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Max phase code of MoA-Indication",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "53be706f-f93f-45f1-9510-b23d1647498c",
+            "sourceColumn": "Max phase code of MoA-Indication",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "LP/SP",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f091a853-f510-4fea-96b2-09f05696cf8a",
+            "sourceColumn": "LP/SP",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Max Phase code of MoA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f228979b-1b56-426f-9e45-342d0bc40555",
+            "sourceColumn": "Max Phase code of MoA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Status Pref",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "4377fba4-a130-4d40-a92d-d6c4d74ef4ed",
+            "sourceColumn": "Status Pref",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "On PRIME",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d78ffeb0-42a9-42ac-8546-bf8932da87b6",
+            "sourceColumn": "On PRIME",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "On Fasttrack",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "5a1c2818-bd8d-4a0f-8407-0828b99df313",
+            "sourceColumn": "On Fasttrack",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Phase",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "bacbcdec-715b-434c-9943-3405596cf5f9",
+            "sourceColumn": "Phase",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Technological Category",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8c98bfd7-3c9c-4a98-89fa-913aa880047d",
+            "sourceColumn": "Technological Category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Technology Subtype Classifications",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fcc98193-abe6-47ac-8e4c-e3623e45b074",
+            "sourceColumn": "Technology Subtype Classifications",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Technology Platform Profile",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "1e8d5d58-ee94-4d49-bfc1-4e613a398108",
+            "sourceColumn": "Technology Platform Profile",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WW Indication Status (Current)",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2729378f-0472-40f6-b8c1-4fa97c3c6df4",
+            "sourceColumn": "WW Indication Status (Current)",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "USA Indication Status (Current)",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2d0325ba-7290-4f9c-8e98-d926487f6779",
+            "sourceColumn": "USA Indication Status (Current)",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Europe Indication Status (Current)",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6e543e60-cc01-40c9-8921-2acf405285dd",
+            "sourceColumn": "Europe Indication Status (Current)",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WW Indication Launch",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "6869c7f3-5c43-4ecc-8e41-53c5839e2355",
+            "sourceColumn": "WW Indication Launch",
+            "summarizeBy": "none",
+            "variations": [
+              {
+                "name": "Variation",
+                "defaultHierarchy": {
+                  "hierarchy": "Date Hierarchy",
+                  "table": "LocalDateTable_5a88aba0-13e3-4ff2-98ca-e56e5ad3312c"
+                },
+                "isDefault": true,
+                "relationship": "502fc3c4-0536-46dd-822d-ae1b89f06117"
+              }
+            ]
+          },
+          {
+            "name": "US Indication Launch",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "25dc52d5-8217-4997-8f36-d88d7e715b07",
+            "sourceColumn": "US Indication Launch",
+            "summarizeBy": "none",
+            "variations": [
+              {
+                "name": "Variation",
+                "defaultHierarchy": {
+                  "hierarchy": "Date Hierarchy",
+                  "table": "LocalDateTable_30ebe8df-2c3e-475a-b0a3-f37708219f8d"
+                },
+                "isDefault": true,
+                "relationship": "24e697f5-dd27-4074-ad0d-d5bc0f449e7b"
+              }
+            ]
+          },
+          {
+            "name": "Europe Indication Launch",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "e1cc6723-6d19-4b27-a7f2-de081480fe08",
+            "sourceColumn": "Europe Indication Launch",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Patent Expiry",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "91a22a1e-3b53-436d-840a-8bd3d5df86ec",
+            "sourceColumn": "Patent Expiry",
+            "summarizeBy": "none",
+            "variations": [
+              {
+                "name": "Variation",
+                "defaultHierarchy": {
+                  "hierarchy": "Date Hierarchy",
+                  "table": "LocalDateTable_715d0780-ad63-4838-b49a-66c00ffb06c3"
+                },
+                "isDefault": true,
+                "relationship": "be10989b-1d7c-41b0-924a-62e5519722f9"
+              }
+            ]
+          },
+          {
+            "name": "Patent Expiry (Ex USA)",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "606b4d52-e25d-4970-b215-9eacbd1ccc95",
+            "sourceColumn": "Patent Expiry (Ex USA)",
+            "summarizeBy": "none",
+            "variations": [
+              {
+                "name": "Variation",
+                "defaultHierarchy": {
+                  "hierarchy": "Date Hierarchy",
+                  "table": "LocalDateTable_c868900b-5938-47fa-ad37-1e252c855e08"
+                },
+                "isDefault": true,
+                "relationship": "53e715ec-4fcc-4a0d-baaf-0feff4a8b588"
+              }
+            ]
+          },
+          {
+            "name": "Novelty for Indication MoA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "522b4550-73b0-43f7-b55b-953e46cdcc15",
+            "sourceColumn": "Novelty for Indication MoA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Phase Code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "a7a61332-f381-43f0-acb4-b50bca80db3b",
+            "sourceColumn": "Phase Code",
+            "summarizeBy": "count"
+          },
+          {
+            "name": "FIC",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "89b7da29-187c-4c95-9a50-b4508ec7a41a",
+            "sourceColumn": "FIC",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Overall Novelty",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "16d805b9-ce78-45b5-9933-12bba6302374",
+            "sourceColumn": "Overall Novelty",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DA2",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "expression": "[DA]",
+            "isDataTypeInferred": true,
+            "lineageTag": "949bace6-8b65-4966-8ec5-e9ecbd3baeb9",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "FIC STATUS",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "expression": "IF('Merged Data'[FIC]=\"1\",\"FIC\",\"Not FIC\")",
+            "isDataTypeInferred": true,
+            "lineageTag": "2db1f98c-b391-4a51-a0d6-198ac62a4b48",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Novelty",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "expression": "IF('Merged Data'[Max phase code of MoA-Indication]=5,\"Not Novel\",IF('Merged Data'[Max phase code of MoA-Indication]=4,\"Novel\",IF('Merged Data'[Max phase code of MoA-Indication]=3,\"Novel (No development)\",\"Not Novel (Failed in Market/Pipeline)\")))",
+            "isDataTypeInferred": true,
+            "lineageTag": "2bc5a9d7-c030-481e-9861-4325dd0e0208",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "lineageTag": "7bfcbbeb-f5fa-4599-9f95-35c8f7941265",
+        "measures": [
+          {
+            "name": "PreclinicalDrugName",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    VALUES('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase] = \"Preclinical\"",
+              ")"
+            ],
+            "lineageTag": "c582f588-6e97-4bc9-bf2d-44bb6756759e"
+          },
+          {
+            "name": "UniqueCountPreclinicalDrugs",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DISTINCTCOUNT('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase] = \"Preclinical\"",
+              ")"
+            ],
+            "formatString": "0",
+            "lineageTag": "ef277f35-0f2b-43eb-a6d0-590cadf7bdeb"
+          },
+          {
+            "name": "UniqueCountCustomValues",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DISTINCTCOUNT('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase] IN {\"Phase I/II\", \"Phase II\"}",
+              ")",
+              ""
+            ],
+            "formatString": "0",
+            "lineageTag": "d55e69f8-825e-44be-9f1b-c50101951a12"
+          },
+          {
+            "name": "UniqueCountPHASEIDrugs",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DISTINCTCOUNT('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase] = \"Phase I\"",
+              ")"
+            ],
+            "formatString": "0",
+            "lineageTag": "2c5098a0-ec76-4f02-bd78-8e543e244878"
+          },
+          {
+            "name": "UniqueCountPHASE3",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DISTINCTCOUNT('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase] IN {\"Phase II/III\", \"Phase III\"}",
+              ")",
+              ""
+            ],
+            "formatString": "0",
+            "lineageTag": "b8531f42-eb85-4017-a92f-900bc0b02bd3"
+          },
+          {
+            "name": "FailRatepipeline",
+            "expression": [
+              "",
+              "VAR UniqueCount_tt = CALCULATE(DISTINCTCOUNT('Merged Data'[Drug Name]), 'Merged Data'[Phase flag] = \"1\")",
+              "VAR UniqueCount_yy = CALCULATE(DISTINCTCOUNT('Merged Data'[Drug Name]), 'Merged Data'[Phase flag] = \"4\")",
+              "VAR FailRate = DIVIDE(UniqueCount_tt, UniqueCount_tt + UniqueCount_yy, 0)",
+              "RETURN",
+              "    FORMAT(FailRate, \"0%\")",
+              ""
+            ],
+            "lineageTag": "1719d1c5-69ac-4159-92e8-6a04cc4aec26"
+          },
+          {
+            "name": "FailRatemarket",
+            "expression": [
+              "",
+              "VAR UniqueCount_tt = CALCULATE(DISTINCTCOUNT('Merged Data'[Drug Name]), 'Merged Data'[Phase flag] = \"2\")",
+              "VAR UniqueCount_yy = CALCULATE(DISTINCTCOUNT('Merged Data'[Drug Name]), 'Merged Data'[Phase flag] = \"5\")",
+              "VAR FailRate = DIVIDE(UniqueCount_tt, UniqueCount_tt + UniqueCount_yy, 0)",
+              "RETURN",
+              "    FORMAT(FailRate, \"0%\")",
+              ""
+            ],
+            "lineageTag": "d26fa0b8-035a-4ec1-ab92-6a821a27a1f2"
+          },
+          {
+            "name": "MarketedCountPerIndication",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    DISTINCTCOUNT('Merged Data'[Drug Name]),",
+              "    'Merged Data'[Phase flag] = \"5\"",
+              ")",
+              ""
+            ],
+            "formatString": "0",
+            "lineageTag": "9dd5ee7d-25c9-4709-ae0a-44fee8f4d60f"
+          },
+          {
+            "name": "IndicationsWithMoreThan2",
+            "expression": [
+              "",
+              "CALCULATETABLE(",
+              "    VALUES('Merged Data'[Indication]),",
+              "    FILTER(",
+              "        'Merged Data',",
+              "        [MarketedCountPerIndication] > 2",
+              "    )",
+              ")",
+              ""
+            ],
+            "lineageTag": "179632c9-689a-4114-8ebe-668495040051"
+          },
+          {
+            "name": "IndicationsWithlessThan3",
+            "expression": [
+              "",
+              "CALCULATETABLE(",
+              "    VALUES('Merged Data'[Indication]),",
+              "    FILTER(",
+              "        'Merged Data',",
+              "        [MarketedCountPerIndication] < 3",
+              "    )",
+              ")"
+            ],
+            "lineageTag": "2a4a27f0-90f4-4a77-b18f-9d06f4fdf7f9"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Merged Data",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\KJ40896\\Documents\\ADIS Data cleaning Final6.xlsx\"), null, true),",
+                "    Sheet2_Sheet = Source{[Item=\"Sheet2\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Sheet2_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Company\", type text}, {\"Drug Name\", type text}, {\"Generic name\", type text}, {\"TA\", type text}, {\"DA\", type text}, {\"Indication\", type text}, {\"Mechanism Of Action\", type text}, {\"Route/Formulation\", type text}, {\"Biosimilar/Brand\", type text}, {\"Phase flag\", Int64.Type}, {\"Platform/Technology\", type text}, {\"Chronological Phase\", type text}, {\"MoA Tier\", type text}, {\"Filter Tier\", type text}, {\"Patient Segment\", type text}, {\"Drug ID\", Int64.Type}, {\"LP/SP\", type text}, {\"New Company based  on Statuses\", type text}, {\"Status Pref\", Int64.Type}, {\"On PRIME\", type text}, {\"On Fasttrack\", type text}, {\"Phase\", type text}, {\"Technological Category\", type text}, {\"Technology Subtype Classifications\", type text}, {\"Technology Platform Profile\", type any}, {\"WW Indication Status (Current)\", type text}, {\"USA Indication Status (Current)\", type text}, {\"Europe Indication Status (Current)\", type text}, {\"WW Indication Launch\", type date}, {\"US Indication Launch\", type date}, {\"Europe Indication Launch\", type any}, {\"Patent Expiry\", type date}, {\"Patent Expiry (Ex USA)\", type date}, {\"Novelty for Indication MoA\", type text}, {\"Phase Code\", Int64.Type}, {\"FIC\", Int64.Type}, {\"Active Early/Late Development\", type text}}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"Generic name\", \"Country\"}, {\"Filter Tier\", \"Phase segment\"}, {\"Drug ID\", \"Max phase code of MoA-Indication\"}, {\"New Company based  on Statuses\", \"Max Phase code of MoA\"}, {\"Active Early/Late Development\", \"Overall Novelty\"}}),",
+                "    #\"Removed Blank Rows\" = Table.SelectRows(#\"Renamed Columns\", each not List.IsEmpty(List.RemoveMatchingItems(Record.FieldValues(_), {\"\", null}))),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Removed Blank Rows\",{{\"Biosimilar/Brand\", \"Proprietary\"}})",
+                "in",
+                "    #\"Renamed Columns1\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "LocalDateTable_5a88aba0-13e3-4ff2-98ca-e56e5ad3312c",
+        "annotations": [
+          {
+            "name": "__PBI_LocalDateTable",
+            "value": "true"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "50d05949-baa4-4125-b644-0a41ddb1546d",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isHidden": true,
+            "lineageTag": "1623f143-0b96-4c51-81d8-3bbb0b1b199a",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isHidden": true,
+            "lineageTag": "ea148182-0c0d-469d-bca9-1601d6916b38",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "55fd9d57-1eb5-4e24-93db-71c880e26884",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isHidden": true,
+            "lineageTag": "a5f5d259-f02c-43c0-9c36-54b9e6128a91",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "9abf730b-525f-48bf-af33-c52c0a055a98",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isHidden": true,
+            "lineageTag": "eb94761a-d86e-4209-95b2-299a2affb0b2",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "ca0c67c8-6774-438a-9390-fd0a288b27ed",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "90a41506-bdbd-4a9a-9fc8-1e2e903a978c",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "6d31335d-c155-4e91-a737-bf51d0944dbc",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "c0b6cfd6-bb2a-49a6-8f67-9022e4aec22b",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "e1bf0843-2ff7-42f2-82f2-f09606dc69e0"
+          }
+        ],
+        "isHidden": true,
+        "lineageTag": "0197792b-cc01-4433-b5aa-35f5c4d2eaee",
+        "partitions": [
+          {
+            "name": "LocalDateTable_5a88aba0-13e3-4ff2-98ca-e56e5ad3312c",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(Year(MIN('Merged Data'[WW Indication Launch])), 1, 1), Date(Year(MAX('Merged Data'[WW Indication Launch])), 12, 31))",
+              "type": "calculated"
+            }
+          }
+        ],
+        "showAsVariationsOnly": true
+      },
+      {
+        "name": "LocalDateTable_30ebe8df-2c3e-475a-b0a3-f37708219f8d",
+        "annotations": [
+          {
+            "name": "__PBI_LocalDateTable",
+            "value": "true"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "b725f06f-f56d-4f5c-880b-eead8eb8ca56",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isHidden": true,
+            "lineageTag": "7f23f073-c2ce-4d5c-9598-2279386027bb",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isHidden": true,
+            "lineageTag": "900d2b0e-ae24-460e-b806-a8091edbf496",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "aa815dab-5ea5-40f9-9e82-4ee77db6d180",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isHidden": true,
+            "lineageTag": "3a3aafb1-6ff9-4647-8812-a6befbf2afe9",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "71c08011-803a-44b4-9629-6b3eaeab791c",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isHidden": true,
+            "lineageTag": "8a0c8ff3-9262-4b3a-9da0-f081bc1830ce",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "c787bec8-630b-49f1-a7ca-c2902bcfdea1",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "f620b628-9420-475d-9256-a7dad84cec2b",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "5674fb17-40dd-4a2e-8f8c-4ce2a3f55af9",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "a305cf4c-e5bd-40b6-8955-f2920c3ee0c6",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "0f81b086-254f-4bb5-8d2f-2461716c968a"
+          }
+        ],
+        "isHidden": true,
+        "lineageTag": "1493a69b-63f2-42e2-8851-b607e326dd6b",
+        "partitions": [
+          {
+            "name": "LocalDateTable_30ebe8df-2c3e-475a-b0a3-f37708219f8d",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(Year(MIN('Merged Data'[US Indication Launch])), 1, 1), Date(Year(MAX('Merged Data'[US Indication Launch])), 12, 31))",
+              "type": "calculated"
+            }
+          }
+        ],
+        "showAsVariationsOnly": true
+      },
+      {
+        "name": "LocalDateTable_715d0780-ad63-4838-b49a-66c00ffb06c3",
+        "annotations": [
+          {
+            "name": "__PBI_LocalDateTable",
+            "value": "true"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "710bd87e-d596-478e-a9d4-8f22bc2eeac9",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isHidden": true,
+            "lineageTag": "38a0effb-43ce-4db6-9e40-982285f1cd40",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isHidden": true,
+            "lineageTag": "80593370-44ac-4df5-b8e3-95df1a8e3755",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "83398c0f-382a-4779-9da5-1ecbb52f0109",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isHidden": true,
+            "lineageTag": "3a05950c-0994-4377-ba7e-8fb4c4929585",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "2cc8a563-dc14-4252-aa48-81a6da321516",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isHidden": true,
+            "lineageTag": "3d604b70-4269-4874-b663-4d5830a94653",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "bdcebc52-9a4a-4934-acd9-e42e2d6a7945",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "9d645619-f67e-4625-aa3b-3ae6c31ca352",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "ec8b7957-3f55-49b4-9fcf-4869f3fc2e18",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "36964f5a-66eb-4a4d-88ee-b1884ac81164",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "d3a34095-c299-4547-bc30-0bfe21b2fb36"
+          }
+        ],
+        "isHidden": true,
+        "lineageTag": "001b53bc-92b7-4b0c-b6d8-77bb03daa458",
+        "partitions": [
+          {
+            "name": "LocalDateTable_715d0780-ad63-4838-b49a-66c00ffb06c3",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(Year(MIN('Merged Data'[Patent Expiry])), 1, 1), Date(Year(MAX('Merged Data'[Patent Expiry])), 12, 31))",
+              "type": "calculated"
+            }
+          }
+        ],
+        "showAsVariationsOnly": true
+      },
+      {
+        "name": "LocalDateTable_c868900b-5938-47fa-ad37-1e252c855e08",
+        "annotations": [
+          {
+            "name": "__PBI_LocalDateTable",
+            "value": "true"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "bf595cb6-854a-406d-a22f-4dba6d921734",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "isHidden": true,
+            "lineageTag": "73bc3160-2c03-4260-a89b-032fbbfa4187",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "isHidden": true,
+            "lineageTag": "1fc139ca-0a82-4b05-ad97-aad5683bee27",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "bcc3e4ef-79d5-426d-8665-a2dae3d4574d",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "isHidden": true,
+            "lineageTag": "36f23453-1653-4701-bb8c-577da5164c83",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "d1a3a18f-eab5-4ed1-a31c-a318685050c5",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "isHidden": true,
+            "lineageTag": "d312fcbb-e621-47a3-80ce-0759b97f1cfd",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "2a1c7d18-dca3-4c6d-9ff2-0ff3992c02d1",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "e3ba704a-0ff6-4519-9160-2421ca92b3ea",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "732291ee-1b5b-45d4-a931-9dd06787ade2",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "9ad41db6-f7bd-46f5-bff6-bea17b1cdd33",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "d6d227cb-5f88-4a77-ab8f-9116444aec7f"
+          }
+        ],
+        "isHidden": true,
+        "lineageTag": "56235f4e-c9a8-4eb6-8b35-a0dc8e67627f",
+        "partitions": [
+          {
+            "name": "LocalDateTable_c868900b-5938-47fa-ad37-1e252c855e08",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(Year(MIN('Merged Data'[Patent Expiry (Ex USA)])), 1, 1), Date(Year(MAX('Merged Data'[Patent Expiry (Ex USA)])), 12, 31))",
+              "type": "calculated"
+            }
+          }
+        ],
+        "showAsVariationsOnly": true
+      },
+      {
+        "name": "Sheet2",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "MOA",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "5f595629-3baf-4288-b8ce-3278e3cd150c",
+            "sourceColumn": "MOA",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Pulmonology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8561b395-becb-45ae-ba00-f5704704722c",
+            "sourceColumn": "Pulmonology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Neurology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "36ddf112-58f7-45cd-9736-68f6850dd193",
+            "sourceColumn": "Neurology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Respiratory",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3eb29289-b68d-4bd8-a1c8-811eefbeb864",
+            "sourceColumn": "Respiratory",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Upper respiratory tract",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "5b13b694-fbd5-46e2-beb2-52b50e76337a",
+            "sourceColumn": "Upper respiratory tract",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Cardiology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "9aa67d4a-f46d-463a-abde-ce8f466231e2",
+            "sourceColumn": "Cardiology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Gastroenterology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ac92ab2b-ac8c-4992-9c11-4960ab541f1f",
+            "sourceColumn": "Gastroenterology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Autoimmune disorders",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "893145d2-1b86-4f7a-87b3-8f23af454603",
+            "sourceColumn": "Autoimmune disorders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Metabolic",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "30301ffb-c9d9-46ca-8b66-998e1bdc4138",
+            "sourceColumn": "Metabolic",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Rheumatology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7df3d420-3287-4996-8b04-04d90c2f2daf",
+            "sourceColumn": "Rheumatology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Dermatology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "70933011-bd9d-47f2-9180-28e8a9c320d0",
+            "sourceColumn": "Dermatology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Women's Health",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8f28f075-6289-426a-afde-37a242095b71",
+            "sourceColumn": "Women's Health",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Retinal disorders",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c738054f-0901-4cc0-ba75-eecfb22bfe10",
+            "sourceColumn": "Retinal disorders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Hepatology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3c1742b3-83b9-48dd-91b4-b4a0683ce52b",
+            "sourceColumn": "Hepatology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Nephrology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "527f98eb-3819-4a44-b3ba-c5071e46c52d",
+            "sourceColumn": "Nephrology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Eye disorders",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2ec08a93-dee9-4ee4-a3f8-943a0fc64bb0",
+            "sourceColumn": "Eye disorders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Vasculitis",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "476bed22-61b9-4236-8e92-075013e20f19",
+            "sourceColumn": "Vasculitis",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Miscellaneous immunology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f078bb41-b86f-4359-a193-55e4a9993825",
+            "sourceColumn": "Miscellaneous immunology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Infectious",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "010fc78f-09b7-43c5-bb66-ee921e84546e",
+            "sourceColumn": "Infectious",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Blood",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b7a6a435-b5d5-4ff0-abb6-8e2ce5076c39",
+            "sourceColumn": "Blood",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oncology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "1b9bcd18-6a24-4bfd-9398-99847aa5d204",
+            "sourceColumn": "Oncology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oral disease",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "430c5ba8-a0fa-4d15-9037-e6a3986020c0",
+            "sourceColumn": "Oral disease",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Pancreas",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "052e0397-5e14-4734-b857-60ab32b5ffcd",
+            "sourceColumn": "Pancreas",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Lower  respiratory tract",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "0bb9d2bb-eb87-40cc-8440-74ea16ac919e",
+            "sourceColumn": "Lower  respiratory tract",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Allergy ",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d837d156-ec97-4b3c-9f6d-e64b33276aab",
+            "sourceColumn": "Allergy ",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Other Respiratory disease",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "1216c47f-a838-4ffb-8e9d-81b7daea6918",
+            "sourceColumn": "Other Respiratory disease",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Column27",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "bd1304b6-ae0e-4037-ac4b-bced071cae8e",
+            "sourceColumn": "Column27",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Novelty",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "037b10af-0afe-4dda-a8d7-f87b28aebdb6",
+            "sourceColumn": "Novelty",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "d71bb42d-6409-419b-b693-d412307962fe",
+        "partitions": [
+          {
+            "name": "Sheet2",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\KJ40896\\Documents\\MOA da data3.xlsx\"), null, true),",
+                "    Sheet2_Sheet = Source{[Item=\"Sheet2\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Sheet2_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"MOA\", type text}, {\"Pulmonology\", type text}, {\"Neurology\", type text}, {\"Respiratory\", type text}, {\"Upper respiratory tract\", type text}, {\"Cardiology\", type text}, {\"Gastroenterology\", type text}, {\"Autoimmune disorders\", type text}, {\"Metabolic\", type text}, {\"Rheumatology\", type text}, {\"Dermatology\", type text}, {\"Women's Health\", type text}, {\"Retinal disorders\", type text}, {\"Hepatology\", type text}, {\"Nephrology\", type text}, {\"Eye disorders\", type text}, {\"Vasculitis\", type text}, {\"Miscellaneous immunology\", type text}, {\"Infectious\", type text}, {\"Blood\", type text}, {\"Oncology\", type text}, {\"Oral disease\", type text}, {\"Pancreas\", type text}, {\"Lower  respiratory tract\", type text}, {\"Allergy \", type text}, {\"Other Respiratory disease\", type text}, {\"Column27\", type any}, {\"Novelty\", type text}})",
+                "in",
+                "    #\"Changed Type\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Table (2)",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Phase",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8f2add09-7ee3-4f8c-bf4a-a6f2dad0a83f",
+            "sourceColumn": "Phase",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rank",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "SortByColumn"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "a5e69e56-a441-4c8b-8980-e4069681175b",
+            "sourceColumn": "rank",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "9307a304-4141-47f3-a59a-b19ab3f599eb",
+        "partitions": [
+          {
+            "name": "Table (2)",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i45WCihKTc7JzMtMTsxR0lEyVIrVAYplJBanKngC+UbIfH1PkJAxshBIwARFAKgIJGiKIggSMQOL+CYWZaeWpKYABcyVYmMB\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Phase = _t, rank = _t]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Phase\", type text}, {\"rank\", Int64.Type}})",
+                "in",
+                "    #\"Changed Type\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
